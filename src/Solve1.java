@@ -21,10 +21,9 @@ public class Solve1 {
 		int number = 1;
 //		while(number<=2) {
 		Document doc = Jsoup.connect("https://solved.ac/ranking/o/309?page=1").get();
-		// 3개씩++
 		Elements name = doc.select("div[class=\"css-qijqp5\"] td");
 		// 21*6을 더해주면서 4개를 동시에 크롤링
-		int n = 2;
+		int n = 14;
 		// 학생의 인원 수
 		int nick = 1;
 		// 21번씩 4번 반복하여 크롤링 시작
@@ -52,9 +51,10 @@ public class Solve1 {
 				Document doc3 = Jsoup.connect("https://solved.ac/profile/"+name.get(n).text()+"/solved?page="+i).get();
 				Elements problem = doc3.select("div[class=\"css-qijqp5\"] td");
 				// 문제 번호 뽑아낼 변수
-					for(int j = 0; j<=196;j+=4) {
+					int k = 0;
+					for(int j = 1; j<=50;j+=1) {
 						id = name.get(n).text();
-						num = Integer.parseInt(problem.get(j).text());
+						num = Integer.parseInt(problem.get(k).text());
 						try {
 							sql = "insert into solve(USER_ID, PROBLEM_ID) values(?, ?)";
 							PreparedStatement pst = con.prepareStatement(sql);
@@ -65,6 +65,7 @@ public class Solve1 {
 							}catch(Exception e) {
 								continue;
 							}
+						k+=4;
 						}
 					}
 				n+=6;

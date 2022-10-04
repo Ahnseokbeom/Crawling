@@ -31,8 +31,9 @@ public class BOJ {
 		Elements pro = doc3.select("div[class=\"css-qijqp5\"] td");
 		System.out.println(pro.get(0).text());
 		System.out.println(pro.get(4).text());
-		
-		
+		Document doc4 = Jsoup.connect("https://solved.ac/profile/"+name.get(2).text()+"/solved?page=1").get();
+		Elements problem = doc4.select("div[class=\"css-qijqp5\"] td");
+		System.out.println(problem.size()/4);
 		
 	}
 
