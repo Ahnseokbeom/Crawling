@@ -22,30 +22,30 @@ public class ProblemRate {
 		// 정답률을 담을 배열
 		String[] str;
 		// tier별 페이지(0 ~ 30)
-		while(x<=30) {
+		while(x<=0) {
 		try {
 			java.sql.Statement st = null;
 			ResultSet rs = null;
 			Connection con = null;
 			// mysql 연결
-			con = DriverManager.getConnection("jdbc:mysql://15.164.220.167:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
+			con = DriverManager.getConnection("jdbc:mysql://132.145.93.241:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
 					"Project", "testing00");
 			st = con.createStatement();
 			// database 선택
-			st.executeUpdate("use SWP;");
+			st.executeUpdate("use swp;");
 			// 각 티어별 페이지 수 계산
 			Document doc = Jsoup.connect("https://solved.ac/problems/level/"+x).get();
-			Elements page = doc.select("div[class=\"Paginationstyles__PaginationWrapper-sc-bdna5c-2 gFzrWw\"]");
+			Elements page = doc.select("div[class=\"css-18lc7iz\"] a");
 			// 각 티어별 페이지 수 계산할 배열
 			String[] s = page.text().split(" ");
-			System.out.println(s[s.length-1]); // page
+			System.out.println(x+" "+s[s.length-1]); // page
 			for(int i = 0;i<Integer.parseInt(s[s.length-1]);i++) {
 				//			Thread.sleep(1000);
 				// tier 페이지에 들어가서 문제 번호 뽑기
 				doc = Jsoup.connect("https://solved.ac/problems/level/"+x+"?page="+(i+1)).get();
-				page = doc.select("div.sticky-table-cell");
+				page = doc.select("div[class=\"css-qijqp5\"] td");
 				// 크롤링한 값들이 4번부터의 값이 필요하므로 4번부터 4씩 증가
-				int z = 4;
+				int z = 0;
 				for(int j = 0;j<(page.size()/4)-1;j++) {
 					//				Thread.sleep(1000);
 					id = Integer.parseInt(page.get(z).text());
@@ -65,7 +65,7 @@ public class ProblemRate {
 					}
 					z+=4;
 					// 문제 번호가 같으면 그 값에 정답률 추가
-					sql = "update Problem set rate = ? where ID = ?";
+					sql = "update problem set rate = ? where ID = ?";
 					PreparedStatement pst = con.prepareStatement(sql);
 					pst.setString(1, rate);
 					pst.setInt(2, id);
@@ -73,8 +73,8 @@ public class ProblemRate {
 					pst.close();
 				}
 			}
-			x++;
-			rs = st.executeQuery("select * from Problem;");
+//			x++;
+			rs = st.executeQuery("select * from problem;");
 			while(rs.next()) {
 				int idx = rs.getInt("ID");
 				String na = rs.getString("namekr");

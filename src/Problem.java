@@ -24,29 +24,30 @@ public class Problem {
 		// 문제 이름을 담을 배열(문제 이름 뒤에 STANDARD를 제거하기 위함)
 		String[] str;
 		// tier별 페이지(0 ~ 30)
-		while(x<=30) {
+		while(true) {
 		try {
 			java.sql.Statement st = null;
 			ResultSet rs = null;
 			Connection con = null;
 			// mysql 연결
-			con = DriverManager.getConnection("jdbc:mysql://15.164.220.167:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
+			con = DriverManager.getConnection("jdbc:mysql://132.145.93.241:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
 					"Project", "testing00");
 			st = con.createStatement();
 			// database 선택
-			st.executeUpdate("use SWP;");
+			st.executeUpdate("use swp;");
 			// 각 티어별 페이지 수 계산
 		Document doc = Jsoup.connect("https://solved.ac/problems/level/"+x).get();
-		Elements page = doc.select("div[class=\"Paginationstyles__PaginationWrapper-sc-bdna5c-2 gFzrWw\"]");
+//		Elements page = doc.select("div[class=\"Paginationstyles__PaginationWrapper-sc-bdna5c-2 gFzrWw\"]");
+		Elements page = doc.select("div[class=\"css-18lc7iz\"] a");
 		// 각 티어별 페이지 수 계산할 배열
 		String[] s = page.text().split(" ");
 		System.out.println(s[s.length-1]);
 		// 페이지 수만큼 반복
-		for(int i = 0;i<Integer.parseInt(s[s.length-1]);i++) {
+		for(int i = 120;i<Integer.parseInt(s[s.length-1]);i++) {
 			doc = Jsoup.connect("https://solved.ac/problems/level/"+x+"?page="+(i+1)).get();
-			page = doc.select("div.sticky-table-cell");
-			int z = 4;
-			int y = 5;
+			page = doc.select("div[class=\"css-qijqp5\"] td");
+			int z = 0;
+			int y = 1;
 			for(int j = 0;j<(page.size()/4)-1;j++) {
 				id = Integer.parseInt(page.get(z).text());
 				str = page.get(y).text().split(" ");
@@ -60,16 +61,20 @@ public class Problem {
 				z+=4;
 				y+=4;
 				solved = x;
-				sql = "insert into Problem(ID, namekr, SOLVED_RANK) values(?, ?, ?)";
+				try {
+				//UPDATE `SWP`.`Ranking` SET `correction` = '51.440%' WHERE (`User_ID` = 'kpeel5839');
+				sql = "insert into problem(ID, namekr, SOLVED_RANK) values(?, ?, ?)";
 				PreparedStatement pst = con.prepareStatement(sql);
 				pst.setInt(1, id);
 				pst.setString(2,namekr);
 				pst.setInt(3, solved);
 				pst.execute();
 				pst.close();
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
 				}
 		}
-		x++;
 		rs = st.executeQuery("select * from Problem;");
 		 // 현재 데이터베이스에 들어간 값 출력하기
 		 while(rs.next()) {

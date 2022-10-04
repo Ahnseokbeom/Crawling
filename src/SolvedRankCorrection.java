@@ -29,11 +29,11 @@ public class SolvedRankCorrection {
 			ResultSet rs = null;
 			Connection con = null;
 			// mysql 연결
-			con = DriverManager.getConnection("jdbc:mysql://52.79.236.129:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
+			con = DriverManager.getConnection("jdbc:mysql://132.145.93.241:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
 					"Project", "testing00");
 			st = con.createStatement();
 			// database 선택
-			st.executeUpdate("use SWP;");
+			st.executeUpdate("use swp;");
 		while(num<=Integer.parseInt(str[str.length-2])) {
 		Document doc2 = Jsoup.connect("https://www.acmicpc.net/school/ranklist/309/"+num++).get();
 		Elements correct = doc2.select("div.table-responsive td");
@@ -44,7 +44,7 @@ public class SolvedRankCorrection {
 			id = correct.get(j).text();
 			cor = correct.get(k).text();
 			// UPDATE `SWP`.`Ranking` SET `correction` = '51.440%' WHERE (`User_ID` = 'kpeel5839');
-			sql = "update Ranking set correction = ? where User_ID = ?";
+			sql = "update user set correction = ? where ID = ?";
 			PreparedStatement pst = con.prepareStatement(sql);
 			pst.setString(1,cor);
 			pst.setString(2,id);
@@ -54,11 +54,11 @@ public class SolvedRankCorrection {
 			k+=6;
 		}
 	}
-		rs = st.executeQuery("select * from Ranking;");
+		rs = st.executeQuery("select * from user;");
 		// 현재 데이터베이스에 들어간 값 출력하기
 	while(rs.next()) {
 		String corr = rs.getString("correction");
-		String idx = rs.getString("User_ID");
+		String idx = rs.getString("ID");
 		System.out.println(corr+" "+idx);
 	}
 		}catch(Exception e) {

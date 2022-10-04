@@ -18,11 +18,11 @@ public class BojAlgorithm {
 			ResultSet rs = null;
 			Connection con = null;
 			// mysql 연결
-			con = DriverManager.getConnection("jdbc:mysql://54.180.30.70:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
+			con = DriverManager.getConnection("jdbc:mysql://132.145.93.241:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
 					"Project", "testing00");
 			st = con.createStatement();
 //			// database 선택
-			st.executeUpdate("use SWP;");
+			st.executeUpdate("use swp;");
 		Document doc = Jsoup.connect("https://www.acmicpc.net/problem/tags").get();
 		Elements e = doc.select("div.table-responsive td");
 		String[][] str = new String[e.size()][2];
@@ -52,12 +52,12 @@ public class BojAlgorithm {
 					System.out.print(str[i][j]+" ");
 					}
 			}
-			sql = "insert into Algorithm(ID, algonamekr) values (?, ?)";
-			PreparedStatement pst = con.prepareStatement(sql);
-			pst.setInt(1, id);
-			pst.setString(2,name);
-			pst.execute();
-			pst.close();
+//			sql = "insert into Algorithm(ID, algonamekr) values (?, ?)";
+//			PreparedStatement pst = con.prepareStatement(sql);
+//			pst.setInt(1, id);
+//			pst.setString(2,name);
+//			pst.execute();
+//			pst.close();
 			z+=2;
 			k+=4;
 		}

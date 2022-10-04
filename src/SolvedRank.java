@@ -28,19 +28,21 @@ public class SolvedRank {
 		String cl = null;
 		// user 푼 문제 수
 		String pro = null;
+		int pa = 1;
 		try {
 			java.sql.Statement st = null;
 			ResultSet rs = null;
 			Connection con = null;
 			// mysql 연결
-			con = DriverManager.getConnection("jdbc:mysql://52.79.236.129:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
+			con = DriverManager.getConnection("jdbc:mysql://132.145.93.241:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
 					"Project", "testing00");
 			st = con.createStatement();
 			// database 선택
-			st.executeUpdate("use SWP;");
-		Document doc = Jsoup.connect("https://solved.ac/ranking/o/309").get();
-		Elements rank = doc.select("div[class=\"StickyTable__Cell-sc-45ty5n-1 bqklaG sticky-table-cell\"]");
-		Elements tier = doc.select("img[class=\"TierBadge__TierBadgeStyle-sc-hiokan-0 puOTB\"]");
+			st.executeUpdate("use swp;");
+		while(pa<=3) {
+		Document doc = Jsoup.connect("https://solved.ac/ranking/o/309?page="+pa).get();
+		Elements rank = doc.select("div[class=\"css-qijqp5\"] td");
+		Elements tier = doc.select("img[class=\"css-1vnxcg0\"]");
 		String[][] str = new String[rank.size()/6][7];
 		int k = 6;
 		// str.length / str[0].length 대신에 rank.size()/6 / 7로 해도 무관
@@ -58,18 +60,24 @@ public class SolvedRank {
 			}
 			// 티어 삽입(svg 파일로 되어 있어서 혼자 다른 값을 참조하여 가져옴)
 			ti = tier.get(i).attr("src").replaceAll("[^0-9]*", "");
-			sql = "insert into Ranking(User_ID,worldrank,skhurank, tier, rating, class, pro ) values (?, ?, ?, ?, ?, ?, ?)";
+			try {
+			sql = "insert into user(ID,problems,solvedrank, worldrank,skhurank,rating, class) values (?, ?, ?, ?, ?, ?, ?)";
 			PreparedStatement pst = con.prepareStatement(sql);
 			// id / worldrank / skhurank / tier / rating / class / pro / correction
 			pst.setString(1, id);
-			pst.setString(2, worldrank);
-			pst.setInt(3, skhurank);
-			pst.setString(4, ti);
-			pst.setInt(5, rating);
-			pst.setString(6, cl);
-			pst.setString(7, pro);
+			pst.setString(2, pro);
+			pst.setString(3, ti);
+			pst.setString(4, worldrank);
+			pst.setInt(5, skhurank);
+			pst.setInt(6, rating);
+			pst.setString(7, cl);
 			pst.execute();
 			pst.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			}
+			pa++;
 		}
 
 		rs = st.executeQuery("select * from Ranking;");
