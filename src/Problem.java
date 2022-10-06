@@ -37,7 +37,6 @@ public class Problem {
 			st.executeUpdate("use swp;");
 			// 각 티어별 페이지 수 계산
 		Document doc = Jsoup.connect("https://solved.ac/problems/level/"+x).get();
-//		Elements page = doc.select("div[class=\"Paginationstyles__PaginationWrapper-sc-bdna5c-2 gFzrWw\"]");
 		Elements page = doc.select("div[class=\"css-18lc7iz\"] a");
 		// 각 티어별 페이지 수 계산할 배열
 		String[] s = page.text().split(" ");
