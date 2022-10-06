@@ -21,13 +21,13 @@ public class User {
 			ResultSet rs = null;
 			Connection con = null;
 			// mysql 연결
-			con = DriverManager.getConnection("jdbc:mysql://52.79.236.129:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
+			con = DriverManager.getConnection("jdbc:mysql://132.145.93.241:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
 					"Project", "testing00");
 			st = con.createStatement();
 			// database 선택
-			st.executeUpdate("use SWP;");
+			st.executeUpdate("use swp;");
 			Document doc = Jsoup.connect("https://solved.ac/ranking/o/309").get();
-			Elements user = doc.select("div.sticky-table-cell");
+			Elements user = doc.select("div[class=\"css-qijqp5\"] td");
 			Elements tier = doc.select("img[class=\"TierBadge__TierBadgeStyle-sc-hiokan-0 puOTB\"]");
 		int k = 8;
 		for(int i = 0;i<user.size()-1/6;i++) {

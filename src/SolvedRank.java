@@ -21,13 +21,13 @@ public class SolvedRank {
 		// user 성공회대학교랭킹
 		int skhurank = 0;
 		// user tier
-		String ti = null;
+		int ti = 0;
 		// user 점수
 		int rating = 0;
 		// user class
 		String cl = null;
 		// user 푼 문제 수
-		String pro = null;
+		int pro = 0;
 		int pa = 1;
 		try {
 			java.sql.Statement st = null;
@@ -55,22 +55,23 @@ public class SolvedRank {
 				case 2: id = rank.get(k++).text(); break; // 8
 				case 3: rating = Integer.parseInt(rank.get(k++).text()); break; // 9
 				case 4: cl = rank.get(k++).text(); break;
-				case 5: pro = rank.get(k++).text(); break;
+				case 5: pro = Integer.parseInt(rank.get(k++).text().replaceAll("[^0-9]*","")); break;
 				}
 			}
 			// 티어 삽입(svg 파일로 되어 있어서 혼자 다른 값을 참조하여 가져옴)
-			ti = tier.get(i).attr("src").replaceAll("[^0-9]*", "");
+			ti = Integer.parseInt(tier.get(i).attr("src").replaceAll("[^0-9]*", ""));
 			try {
-			sql = "insert into user(ID,problems,solvedrank, worldrank,skhurank,rating, class) values (?, ?, ?, ?, ?, ?, ?)";
+//			sql = "insert into user(ID,problems,solvedrank, worldrank,skhurank,rating, class) values (?, ?, ?, ?, ?, ?, ?)";
+			sql = "update user set problems = ?, solvedrank = ?,worldrank=?,skhurank=?,rating=?,class=? where ID = ?";
 			PreparedStatement pst = con.prepareStatement(sql);
 			// id / worldrank / skhurank / tier / rating / class / pro / correction
-			pst.setString(1, id);
-			pst.setString(2, pro);
-			pst.setString(3, ti);
-			pst.setString(4, worldrank);
-			pst.setInt(5, skhurank);
-			pst.setInt(6, rating);
-			pst.setString(7, cl);
+			pst.setInt(1, pro);
+			pst.setInt(2, ti);
+			pst.setString(3, worldrank);
+			pst.setInt(4, skhurank);
+			pst.setInt(5, rating);
+			pst.setString(6, cl);
+			pst.setString(7, id);
 			pst.execute();
 			pst.close();
 			}catch(Exception e) {
@@ -80,19 +81,19 @@ public class SolvedRank {
 			pa++;
 		}
 
-		rs = st.executeQuery("select * from Ranking;");
+//		rs = st.executeQuery("select * from Ranking;");
 		// 현재 데이터베이스에 들어간 값 출력하기
 		// id / worldrank / skhurank / tier / rating / class / pro / correction
-		while(rs.next()) {
-		String idx = rs.getString("User_ID");
-		String wr = rs.getString("worldrank");
-		int sr = rs.getInt("skhurank");
-		String t = rs.getString("tier");
-		int ra = rs.getInt("rating");
-		String c = rs.getString("class");
-		String pr = rs.getString("pro");
-		System.out.println(idx+" "+wr+" "+sr+" "+t+" "+ra+" "+c+" "+pr);
-		}
+//		while(rs.next()) {
+//		String idx = rs.getString("User_ID");
+//		String wr = rs.getString("worldrank");
+//		int sr = rs.getInt("skhurank");
+//		String t = rs.getString("tier");
+//		int ra = rs.getInt("rating");
+//		String c = rs.getString("class");
+//		String pr = rs.getString("pro");
+//		System.out.println(idx+" "+wr+" "+sr+" "+t+" "+ra+" "+c+" "+pr);
+//		}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
