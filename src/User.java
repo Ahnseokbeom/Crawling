@@ -41,7 +41,7 @@ public class User {
 				k+=3;
 			}
 			rank = Integer.parseInt(tier.get(i).attr("src").replaceAll("[^0-9]*", ""));
-			sql = "insert into User values (?, ?, ?)";
+			sql = "insert into user values (?, ?, ?)";
 			PreparedStatement pst = con.prepareStatement(sql);
 			pst.setString(1, id);
 			pst.setInt(2,pro);
@@ -50,7 +50,7 @@ public class User {
 			pst.close();
 		}
 
-		rs = st.executeQuery("select * from User;");
+		rs = st.executeQuery("select * from user;");
 		// 현재 데이터베이스에 들어간 값 출력하기
 		while(rs.next()) {
 		String idx = rs.getString("ID");

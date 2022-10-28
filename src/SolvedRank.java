@@ -29,6 +29,7 @@ public class SolvedRank {
 		// user 푼 문제 수
 		int pro = 0;
 		int pa = 1;
+		int count = 0;
 		try {
 			java.sql.Statement st = null;
 			ResultSet rs = null;
@@ -57,9 +58,11 @@ public class SolvedRank {
 				case 4: cl = rank.get(k++).text(); break;
 				case 5: pro = Integer.parseInt(rank.get(k++).text().replaceAll("[^0-9]*","")); break;
 				}
+				count++;
 			}
 			// 티어 삽입(svg 파일로 되어 있어서 혼자 다른 값을 참조하여 가져옴)
 			ti = Integer.parseInt(tier.get(i).attr("src").replaceAll("[^0-9]*", ""));
+			System.out.println(worldrank+" "+skhurank+" "+id+" "+rating+" "+cl+" "+pro);
 			try {
 //			sql = "insert into user(ID,problems,solvedrank, worldrank,skhurank,rating, class) values (?, ?, ?, ?, ?, ?, ?)";
 			sql = "update user set problems = ?, solvedrank = ?,worldrank=?,skhurank=?,rating=?,class=? where ID = ?";
@@ -81,22 +84,23 @@ public class SolvedRank {
 			pa++;
 		}
 
-//		rs = st.executeQuery("select * from Ranking;");
-		// 현재 데이터베이스에 들어간 값 출력하기
-		// id / worldrank / skhurank / tier / rating / class / pro / correction
+		rs = st.executeQuery("select * from user;");
+//		 현재 데이터베이스에 들어간 값 출력하기
+//		 id / worldrank / skhurank / tier / rating / class / pro / correction
 //		while(rs.next()) {
-//		String idx = rs.getString("User_ID");
+//		String idx = rs.getString("ID");
 //		String wr = rs.getString("worldrank");
 //		int sr = rs.getInt("skhurank");
-//		String t = rs.getString("tier");
+//		String t = rs.getString("solvedrank");
 //		int ra = rs.getInt("rating");
 //		String c = rs.getString("class");
-//		String pr = rs.getString("pro");
+//		String pr = rs.getString("problems");
 //		System.out.println(idx+" "+wr+" "+sr+" "+t+" "+ra+" "+c+" "+pr);
 //		}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+//		System.out.println("count : "+count);
 		}
 
 	}
