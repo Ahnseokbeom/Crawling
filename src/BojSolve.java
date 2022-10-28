@@ -3,6 +3,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Arrays;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,7 +35,7 @@ public class BojSolve {
 				Document doc = Jsoup.connect("https://www.acmicpc.net/school/ranklist/309/3").get();
 				Elements name = doc.select("div.table-responsive td");
 				st.executeUpdate("use swp;");
-				while(nick <= 61) {
+				while(nick <= 100) {
 					Document doc2 = Jsoup.connect("https://www.acmicpc.net/problemset?user="+name.get(n).text()+"&user_solved=1").get();
 					Elements page = doc2.select("div.text-center");
 					// User별 page
@@ -42,14 +43,18 @@ public class BojSolve {
 					System.out.println(name.get(n).text()+" "+str[str.length-1]);
 					// 0 6
 					for(int i = 1;i<=Integer.parseInt(str[str.length-1]);i++) {
-						Document doc3 = Jsoup.connect("https://www.acmicpc.net/problemset?user="+name.get(n).text()+"&user_solved="+i).get();
-						Elements pro = doc3.select("div.table-responsive td");
+						int count = 0;
+						//https://www.acmicpc.net/problemset?user=eoehd1ek&user_solved=1
+						Document doc3 = Jsoup.connect("https://www.acmicpc.net/problemset?user="+name.get(n).text()+"&user_solved=1&page="+i).get();
+						Elements pro = doc3.select("div.table-responsive td.list_problem_id");
+						String[] proStr = pro.text().split(" ");
+						System.out.println(Arrays.toString(proStr));
 						int k = 0;
-						for(int j = 0;j<100;j++) {
+						for(int j = 0;j<proStr.length;j++) {
 							id = name.get(n).text();
+							num = Integer.parseInt(proStr[j]);
 							try {
-							num = Integer.parseInt(pro.get(k).text());
-							System.out.println(num);
+							count++;
 							k+=6;
 								sql = "insert into solve(USER_ID, PROBLEM_ID) values(?, ?)";
 								PreparedStatement pst = con.prepareStatement(sql);
@@ -57,10 +62,14 @@ public class BojSolve {
 								pst.setInt(2, num);
 								pst.execute();
 								pst.close();
+								
 								}catch(Exception e) {
 									continue;
 								}
+							
 						}
+						System.out.println("user : "+ id+"num : "+nick);
+						System.out.println("count : "+count);
 					}
 					n+=6;
 				}
