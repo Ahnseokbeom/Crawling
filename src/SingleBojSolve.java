@@ -32,7 +32,7 @@ public class SingleBojSolve {
 						"Project", "testing00");
 				st = con.createStatement();
 				// database 선택
-				Document page = Jsoup.connect("https://www.acmicpc.net/problemset?user=q9922000&user_solved=1").get();
+				Document page = Jsoup.connect("https://www.acmicpc.net/problemset?user="+id+"+&user_solved=1").get();
 				Elements Userpage = page.select("div.text-center");
 				st.executeUpdate("use swp;");
 					// User별 page
@@ -40,7 +40,7 @@ public class SingleBojSolve {
 					System.out.println("User : "+id+" page : "+str[str.length-1]);
 					for(int i = 1;i<=Integer.parseInt(str[str.length-1]);i++) {
 						//https://www.acmicpc.net/problemset?user=eoehd1ek&user_solved=1
-						Document pro = Jsoup.connect("https://www.acmicpc.net/problemset?user=q9922000&user_solved=1&page="+i).get();
+						Document pro = Jsoup.connect("https://www.acmicpc.net/problemset?user="+id+"&user_solved=1&page="+i).get();
 						Elements Userpro = pro.select("div.table-responsive td.list_problem_id");
 						String[] proStr = Userpro.text().split(" ");
 						System.out.println(Arrays.toString(proStr));
