@@ -12,10 +12,8 @@ import org.jsoup.select.Elements;
 public class SingleBojSolve {
 	public static void main(String[] args) throws IOException{
 		/*
-				사용법(숫자는 줄 수를 의미함)
-		24 : id = 유저 아이디 입력
-		35 : problems?user=????에 유저 아이디 입력
-		43 : problems?user=????에 유저 아이디 입력
+		사용법(숫자는 줄 수를 의미함)
+		21 : id = 유저 아이디 입력
 		그리고 command+F11로 실행
 		*/ 
 		String sql;
@@ -56,8 +54,7 @@ public class SingleBojSolve {
 								pst.close();
 								}catch(Exception e) {
 									continue;
-								}
-							
+							}
 						}
 					}
 				
