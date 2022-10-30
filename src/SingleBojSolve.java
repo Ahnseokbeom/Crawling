@@ -18,7 +18,7 @@ public class SingleBojSolve {
 		*/ 
 		String sql;
 		// 유저 ID
-		String id = "q9922000";
+		String id = "asb0313";
 		// 문제 번호
 		int num = 0;
 			try {
