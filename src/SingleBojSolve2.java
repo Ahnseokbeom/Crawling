@@ -10,21 +10,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-public class SingleBojSolve {
+public class SingleBojSolve2 {
 	public static void main(String[] args) throws IOException{
-		
-		/*
-		 * 사용법
-		 * id = ???(새로운 추가될 유저)
-		 * skhurank = ???(추가될 유저의 등수)
-		 * */
 		String sql;
 		// 유저 ID
-		String id = "pej0509";
+		String id = "asb0313";
 		// 총 유저 수
 		String count = "";
-		// 해당 유저 등수
-		int skhurank = 113;
+		int skhurank = 45;
 		int rankUp = 0;
 		HashMap<String, Integer> map = new HashMap<>();
 		int num = 0;
@@ -57,40 +50,21 @@ public class SingleBojSolve {
 					map.put(rs.getString("ID"),rs.getInt("skhurank"));
 					size++;
 				}
+				System.out.println(Arrays.toString(userName));
+				
 				for(int i = 0;i<userName.length;i++) {
 					try {
-					sql = "update user set  skhurank = ? where ID = ? and ID != ? ";
+					sql = "update user set  skhurank = ? where ID = ?";
 					PreparedStatement pst = con.prepareStatement(sql);
-					rankUp = map.get(userName[i])+1;
+					rankUp = map.get(userName[i])-1;
 					pst.setInt(1,rankUp);
 					pst.setString(2, userName[i]);
-					pst.setString(3, id);
 					pst.execute();
 					pst.close();
 					}catch(Exception e) {
 						e.printStackTrace();
 					}
 				}
-					for(int i = 1;i<=Integer.parseInt(str[str.length-1]);i++) {
-						Document pro = Jsoup.connect("https://www.acmicpc.net/problemset?user="+id+"&user_solved=1&page="+i).get();
-						Elements Userpro = pro.select("div.table-responsive td.list_problem_id");
-						String[] proStr = Userpro.text().split(" ");
-						System.out.println(Arrays.toString(proStr));
-						for(int j = 0;j<proStr.length;j++) {
-							num = Integer.parseInt(proStr[j]);
-							System.out.println(" num : "+num+" page : "+i);
-							try {
-								sql = "insert into solve(USER_ID, PROBLEM_ID) values(?, ?)";
-								PreparedStatement pst = con.prepareStatement(sql);
-								pst.setString(1, id);
-								pst.setInt(2, num);
-								pst.execute();
-								pst.close();
-								}catch(Exception e) {
-									continue;
-							}
-						}
-					}
 				
 				}catch(Exception e) {
 					e.printStackTrace();
