@@ -12,8 +12,6 @@ import org.jsoup.select.Elements;
 
 public class SingleBojSolve {
 	public static void main(String[] args) throws IOException{
-<<<<<<< HEAD
-		
 		/*
 		 * 사용법
 		 * id = ???(새로운 추가될 유저)
@@ -26,14 +24,6 @@ public class SingleBojSolve {
 		String count = "";
 		// 해당 유저 등수
 		int skhurank = 113;
-=======
-		String sql;
-		// 유저 ID
-		String id = "asb0313";
-		// 총 유저 수
-		String count = "";
-		int skhurank = 45;
->>>>>>> bfada4fd5f52a123a7381cfdab9c92e7e3ba6008
 		int rankUp = 0;
 		HashMap<String, Integer> map = new HashMap<>();
 		int num = 0;
