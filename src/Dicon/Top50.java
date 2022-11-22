@@ -15,7 +15,12 @@ public class Top50 {
 		Document doc = Jsoup.connect("https://www.gamemeca.com/ranking.php").get();
 		Elements img = doc.select("tr.ranking-table-rows td img");
 		Elements name = doc.select("tr.ranking-table-rows td div.game-name");
+		Elements url = doc.select("tr.ranking-table-rows td div.game-name a");
 		Elements typ = doc.select("tr.ranking-table-rows td div.game-info");
+		String[] urls = new String[50];
+		for(int i = 0;i<urls.length;i++) {
+			urls[i] = url.get(i).attr("href");
+		}
 		String[] Gname = new String[50];
 
 		for(int i = 0;i<50;i++) {
@@ -39,6 +44,7 @@ public class Top50 {
 			String imgurl = "";
 			String gametype = "";
 			String sql = "";
+			String Gameurl = "";
 			java.sql.Statement st = null;
 //			ResultSet rs = null;
 			Connection con = null;
@@ -47,19 +53,23 @@ public class Top50 {
 			st = con.createStatement();
 			st.executeUpdate("use DiconPJ;");
 			for(int i = 0;i<50;i++) {
+				Document Gurl = Jsoup.connect("https://www.gamemeca.com/"+urls[i]).get();
+				Elements Gaurl = Gurl.select("div.GmaeInfoTxt p.btmSocial a");
 				int heart = (int)(Math.random()*10+1);
 				gamename = Gname[i];
 				gametype = type[i];
 				imgurl = imgL[i];
+				Gameurl = Gaurl.attr("href");
 //				sql = "insert into Game values(?,?,?,?,?)";
-				sql = "update Game set name = ?, type = ?, image = ?, heart = ? where ranking = ?";
+				sql = "update Game set name = ?, type = ?, image = ?, heart = ?, url = ? where ranking = ?";
 				PreparedStatement pst = con.prepareStatement(sql);
 				System.out.println(i+1);
 				pst.setString(1, gamename);
 				pst.setString(2, gametype);
 				pst.setString(3, imgurl);
 				pst.setInt(4, heart);
-				pst.setInt(5, i+1);
+				pst.setString(5, Gameurl);
+				pst.setInt(6, i+1);
 				pst.execute();
 				pst.close();
 			}
