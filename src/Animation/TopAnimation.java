@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,10 +14,13 @@ import org.jsoup.select.Elements;
 
 public class TopAnimation {
 	public static void main(String[] args) throws IOException{
+		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+		Runnable crawling = () -> {
+		try {
 		Document doc = Jsoup.connect("https://anilife.live/top20").get();
 		Elements index = doc.select("span.epx");
 		Elements title = doc.select("div.tt h2");
-		try {
+		
 			java.sql.Statement st = null;
 			Connection con = null;
 			String sql = "";
@@ -44,7 +50,9 @@ public class TopAnimation {
 		}
 		}catch(Exception e) {
 			e.printStackTrace();
-		}
+			}
+		};
+		scheduler.scheduleAtFixedRate(crawling, 0, 1, TimeUnit.DAYS);
 	}
 }
 

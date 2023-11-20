@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,6 +20,9 @@ import org.jsoup.select.Elements;
 
 public class Quarterly {
 	public static void main(String[] args) throws IOException{
+		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+		Runnable crawling = () -> {
+		try {
 		Document doc = Jsoup.connect("https://anilife.live/quarter").get();
 		Elements category = doc.select("div.page li a");
 		HashMap<String, String> map = new HashMap<>();
@@ -27,7 +33,6 @@ public class Quarterly {
 		System.out.println(map);
 		List<String> list = new ArrayList<>(map.keySet());
 		System.out.println(list);
-		try {
 		for(int i = 0;i<17;i++) {
 			int paging = 1;
 			java.sql.Statement st = null;
@@ -101,7 +106,9 @@ public class Quarterly {
 		}
 		}catch(Exception e) {
 			e.printStackTrace();
-		}
+			}
+		};
+		scheduler.scheduleAtFixedRate(crawling, 0, 1, TimeUnit.HOURS);
 	}
 	private static boolean isTitleAlready(Connection con, String title) {
 		int count = 0;
