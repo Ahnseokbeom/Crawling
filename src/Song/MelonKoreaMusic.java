@@ -16,21 +16,22 @@ import org.jsoup.select.Elements;
 public class MelonKoreaMusic {	
 	static String num = "100";
 	static String[] arr = {"발라드","댄스","랩/힙합","R&B/Soul","인디음악","록/메탈","트로트","포크/블루스"};
+	static String[] arr1 = {"ballade","dance","rap","RnB","indie","rock","trot","fork"};
 	static int page = 0;
 	public static void main(String[] args) throws IOException{
 		
 		// Top100
 		ExecutorService executorService = Executors.newFixedThreadPool(1);
-		executorService.submit(new MelonCrawlerTop100());
-
-        // 스레드 풀 종료를 기다림
-        executorService.shutdown();
-        try {
-            // 모든 작업이 완료될 때까지 최대 10분 동안 대기
-            executorService.awaitTermination(10, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//		executorService.submit(new MelonCrawlerTop100());
+//
+//        // 스레드 풀 종료를 기다림
+//        executorService.shutdown();
+//        try {
+//            // 모든 작업이 완료될 때까지 최대 10분 동안 대기
+//            executorService.awaitTermination(10, TimeUnit.MINUTES);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         // Genre
         for(int i = 0;i<arr.length;i++) {
         	System.out.println(i+1);
@@ -76,8 +77,8 @@ public class MelonKoreaMusic {
 	                    sql = "insert into top100 values(?,?,?,?,?)";
 	                    PreparedStatement pst = con.prepareStatement(sql);
 	                    pst.setInt(1, idx);
-	                    pst.setString(2, e.attr("src"));
-	                    pst.setString(3, title.get(i).text());
+	                    pst.setString(2, title.get(i).text());
+	                    pst.setString(3, e.attr("src"));
 	                    pst.setString(4, artist.get(i).text());
 	                    pst.setString(5, album.get(i).text());
 	                    pst.execute();
@@ -122,19 +123,19 @@ public class MelonKoreaMusic {
 	                i = 0;
 	                idx = 1;
 	                for (Element e : img) {
-	                    sql = "insert into koreamusic values(?,?,?,?,?,?)";
+	                    sql = "insert into korea_"+arr1[page]+"(title,img,artist,album,genre) values(?,?,?,?,?)";
 	                    PreparedStatement pst = con.prepareStatement(sql);
-	                    pst.setInt(1, idx);
+	                    pst.setString(1, title.get(i).text());
 	                    pst.setString(2, e.attr("src"));
-	                    pst.setString(3, title.get(i).text());
-	                    pst.setString(4, artist.get(i).text());
-	                    pst.setString(5, album.get(i).text());
-	                    pst.setString(6, arr[page]);
+	                    pst.setString(3, artist.get(i).text());
+	                    pst.setString(4, album.get(i).text());
+	                    pst.setString(5, arr[page]);
 	                    pst.execute();
 	                    pst.close();
 	                    i++;
 	                    idx++;
 	                }
+	                System.out.println(sql);
 	            } catch (Exception e) {
 	                e.printStackTrace();
 	            }

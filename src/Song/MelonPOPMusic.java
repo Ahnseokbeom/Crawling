@@ -17,9 +17,9 @@ import org.jsoup.select.Elements;
 public class MelonPOPMusic {
 	static String num = "900";
 	static String[] arr = {"POP","록/메탈","일렉트로니카","랩/힙합","R&B/Soul","포크/블루스/컨트리"};
+	static String[] arr1 = {"POP","rock","electronica","rap","RnB","fork"};
 	static int page = 0;
 	public static void main(String[] args) {
-        
         for(int i = 0;i<arr.length;i++) {
         	System.out.println(i+1);
         	ExecutorService executorService = Executors.newFixedThreadPool(1);
@@ -67,14 +67,13 @@ public class MelonPOPMusic {
                 i = 0;
                 idx = 1;
                 for (Element e : img) {
-                    sql = "insert into popmusic values(?,?,?,?,?,?)";
+                    sql = "insert into pop_"+arr1[page]+"(title,img,artist,album,genre) values(?,?,?,?,?)";
                     PreparedStatement pst = con.prepareStatement(sql);
-                    pst.setInt(1, idx);
+                    pst.setString(1, title.get(i).text());
                     pst.setString(2, e.attr("src"));
-                    pst.setString(3, title.get(i).text());
-                    pst.setString(4, artist.get(i).text());
-                    pst.setString(5, album.get(i).text());
-                    pst.setString(6, arr[page]);
+                    pst.setString(3, artist.get(i).text());
+                    pst.setString(4, album.get(i).text());
+                    pst.setString(5, "일렉트로니카");
                     pst.execute();
                     pst.close();
                     i++;

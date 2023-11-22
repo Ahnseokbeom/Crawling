@@ -15,7 +15,8 @@ import org.jsoup.select.Elements;
 
 public class MelonETCMusic {
 	static String num = "1800";
-	static String[] arr = {"뉴에이지","J-POP","월드뮤직","CCM","어린이/태교","종교음악","국악"};
+	static String[] arr = {"뉴에이지","J-POP","월드뮤직","CCM"};
+	static String[] arr1 = {"newage","jpop","wordmusic","ccm"};
 	static int page = 0;
 	public static void main(String[] args) {
 		
@@ -79,20 +80,17 @@ public class MelonETCMusic {
                 st.executeUpdate("use music");
 
                 i = 0;
-                idx = 1;
                 for (Element e : img) {
-                    sql = "insert into etcmusic values(?,?,?,?,?,?)";
+                	sql = "insert into etc_ost(title,img,artist,album,genre) values(?,?,?,?,?)";
                     PreparedStatement pst = con.prepareStatement(sql);
-                    pst.setInt(1, idx);
+                    pst.setString(1, title.get(i).text());
                     pst.setString(2, e.attr("src"));
-                    pst.setString(3, title.get(i).text());
-                    pst.setString(4, artist.get(i).text());
-                    pst.setString(5, album.get(i).text());
-                    pst.setString(6, "OST");
+                    pst.setString(3, artist.get(i).text());
+                    pst.setString(4, album.get(i).text());
+                    pst.setString(5, "OST");
                     pst.execute();
                     pst.close();
                     i++;
-                    idx++;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -129,20 +127,17 @@ public class MelonETCMusic {
                 st.executeUpdate("use music");
 
                 i = 0;
-                idx = 1;
                 for (Element e : img) {
-                    sql = "insert into etcmusic values(?,?,?,?,?,?)";
+                	sql = "insert into etc_classic(title,img,artist,album,genre) values(?,?,?,?,?)";
                     PreparedStatement pst = con.prepareStatement(sql);
-                    pst.setInt(1, idx);
+                    pst.setString(1, title.get(i).text());
                     pst.setString(2, e.attr("src"));
-                    pst.setString(3, title.get(i).text());
-                    pst.setString(4, artist.get(i).text());
-                    pst.setString(5, album.get(i).text());
-                    pst.setString(6, "클래식");
+                    pst.setString(3, artist.get(i).text());
+                    pst.setString(4, album.get(i).text());
+                    pst.setString(5, "클래식");
                     pst.execute();
                     pst.close();
                     i++;
-                    idx++;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -179,20 +174,17 @@ public class MelonETCMusic {
                 st.executeUpdate("use music");
 
                 i = 0;
-                idx = 1;
                 for (Element e : img) {
-                    sql = "insert into etcmusic values(?,?,?,?,?,?)";
+                    sql = "insert into etc_jazz(title,img,artist,album,genre) values(?,?,?,?,?)";
                     PreparedStatement pst = con.prepareStatement(sql);
-                    pst.setInt(1, idx);
+                    pst.setString(1, title.get(i).text());
                     pst.setString(2, e.attr("src"));
-                    pst.setString(3, title.get(i).text());
-                    pst.setString(4, artist.get(i).text());
-                    pst.setString(5, album.get(i).text());
-                    pst.setString(6, "재즈");
+                    pst.setString(3, artist.get(i).text());
+                    pst.setString(4, album.get(i).text());
+                    pst.setString(5, "재즈");
                     pst.execute();
                     pst.close();
                     i++;
-                    idx++;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -207,7 +199,7 @@ public class MelonETCMusic {
 	    @Override
 	    public void run() {
 	        try {
-	            Document doc = Jsoup.connect("https://www.melon.com/genre/classic_list.htm?gnrCode=GN1600").get();
+	            Document doc = Jsoup.connect("https://www.melon.com/genre/song_list.htm?gnrCode=GN"+num).get();
 	            Elements img = doc.select("div.wrap img");
 	            Elements title = doc.select("div.wrap_song_info div.ellipsis.rank01");
 	            Elements artist = doc.select("div.wrap_song_info div.ellipsis.rank02 span.checkEllipsis");
@@ -229,20 +221,17 @@ public class MelonETCMusic {
                 st.executeUpdate("use music");
 
                 i = 0;
-                idx = 1;
                 for (Element e : img) {
-                    sql = "insert into etcmusic values(?,?,?,?,?,?)";
+                	sql = "insert into etc_"+arr1[page]+"(title,img,artist,album,genre) values(?,?,?,?,?)";
                     PreparedStatement pst = con.prepareStatement(sql);
-                    pst.setInt(1, idx);
+                    pst.setString(1, title.get(i).text());
                     pst.setString(2, e.attr("src"));
-                    pst.setString(3, title.get(i).text());
-                    pst.setString(4, artist.get(i).text());
-                    pst.setString(5, album.get(i).text());
-                    pst.setString(6, arr[page]);
+                    pst.setString(3, artist.get(i).text());
+                    pst.setString(4, album.get(i).text());
+                    pst.setString(5, arr[page]);
                     pst.execute();
                     pst.close();
                     i++;
-                    idx++;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
