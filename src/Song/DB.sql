@@ -99,7 +99,7 @@ create table pop_rock(
     primary key (id, title),
     foreign key(genre) references genre(genre)
 );
-create table pop_eletronica(
+create table pop_electronica(
 	id int not null auto_increment,
     title varchar(100) not null,
     img varchar(255) not null,
