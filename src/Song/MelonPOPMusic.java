@@ -61,21 +61,22 @@ public class MelonPOPMusic {
                 Connection con = null;
                 String sql = "";
                 con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
-                        "username", "password");
+                		"username", "password");
                 st = con.createStatement();
                 st.executeUpdate("use music");
 
                 i = 0;
                 idx = 1;
                 for (Element e : img) {
-                    sql = "insert into pop_music values(?,?,?,?,?,?)";
+                    sql = "insert into music(ranking, title, img, artist, album, type_id, genre_id) values(?,?,?,?,?,?,?)";
                     PreparedStatement pst = con.prepareStatement(sql);
                     pst.setInt(1,idx);
                     pst.setString(2, title.get(i).text());
                     pst.setString(3, e.attr("src"));
                     pst.setString(4, artist.get(i).text());
                     pst.setString(5, album.get(i).text());
-                    pst.setInt(6, genre(con,arr[page]));
+                    pst.setInt(6, type(con,"pop"));
+                    pst.setInt(7, genre(con,arr[page]));
                     pst.execute();
                     pst.close();
                     i++;
@@ -104,4 +105,19 @@ public class MelonPOPMusic {
 		}
 		return -1;
 	}
+	// Insert type_id
+		public static int type(Connection con, String type) throws SQLException{
+			String sql = "select id from music_type where type = ?";
+			ResultSet resultSet = null;
+			try (PreparedStatement select = con.prepareStatement(sql)){
+				select.setString(1, type);
+				resultSet = select.executeQuery();
+				if(resultSet.next()) {
+					return resultSet.getInt("id"); 
+				}
+			}finally {
+				if(resultSet!=null) resultSet.close();
+			}
+			return -1;
+		}
 }

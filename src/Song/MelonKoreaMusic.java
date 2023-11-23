@@ -21,18 +21,17 @@ public class MelonKoreaMusic {
 	static int page = 0;
 	public static void main(String[] args) throws IOException{
 		
-		// Top100 / OST
-		ExecutorService executorService = Executors.newFixedThreadPool(2);
-		executorService.submit(new MelonCrawlerTop100());
-		executorService.submit(new MelonCrawlerOST());
-        // 스레드 풀 종료를 기다림
-        executorService.shutdown();
-        try {
-            // 모든 작업이 완료될 때까지 최대 10분 동안 대기
-            executorService.awaitTermination(10, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//		// Top100 / OST
+		ExecutorService executorService = Executors.newFixedThreadPool(1);
+//		executorService.submit(new MelonCrawlerTop100());
+//        // 스레드 풀 종료를 기다림
+//        executorService.shutdown();
+//        try {
+//            // 모든 작업이 완료될 때까지 최대 10분 동안 대기
+//            executorService.awaitTermination(10, TimeUnit.MINUTES);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         // Genre
         for(int i = 0;i<arr.length;i++) {
         	System.out.println(i+1);
@@ -95,58 +94,6 @@ public class MelonKoreaMusic {
 	        }
 	    }
 	}
-	// OST
-	public static class MelonCrawlerOST implements Runnable {
-		 @Override
-	    public void run() {
-	        try {
-	            Document doc = Jsoup.connect("https://www.melon.com/genre/song_list.htm?gnrCode=GN1500").get();
-	            Elements img = doc.select("div.wrap img");
-	            Elements title = doc.select("div.wrap_song_info div.ellipsis.rank01");
-	            Elements artist = doc.select("div.wrap_song_info div.ellipsis.rank02 span.checkEllipsis");
-	            Elements album = doc.select("div.wrap_song_info div.ellipsis.rank03");
-	            int i = 0;
-	            int idx = 1;
-	            for(Element e : img) {
-	            	System.out.println(idx+" "+e.attr("src")+" "+title.get(i).text()+" "+artist.get(i).text()+" "+album.get(i).text());
-	            	i++;
-	            	idx++;
-	            }
-	            try {
-	                java.sql.Statement st = null;
-	                Connection con = null;
-	                String sql = "";
-	                con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
-	                		"username", "password");
-	                st = con.createStatement();
-	                st.executeUpdate("use music");
-
-	                i = 0;
-	                idx = 1;
-	                for (Element e : img) {
-	                    sql = "insert into korea_music values(?,?,?,?,?,?)";
-	                    PreparedStatement pst = con.prepareStatement(sql);
-	                    pst.setInt(1, idx);
-	                    pst.setString(2, title.get(i).text());
-	                    pst.setString(3, e.attr("src"));
-	                    pst.setString(4, artist.get(i).text());
-	                    pst.setString(5, album.get(i).text());
-	                    pst.setInt(6, genre(con, arr[page]));
-	                    pst.execute();
-	                    pst.close();
-	                    i++;
-	                    idx++;
-	                }
-	                System.out.println(sql);
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	    }
-	}
-	
 	// Melon KoreaMusic 8가지 Genre
 	public static class MelonCrawlerGenre implements Runnable {
 		 @Override
@@ -176,14 +123,15 @@ public class MelonKoreaMusic {
 	                i = 0;
 	                idx = 1;
 	                for (Element e : img) {
-	                    sql = "insert into korea_music values(?,?,?,?,?,?)";
+	                    sql = "insert into music(ranking, title, img, artist, album, type_id, genre_id) values(?,?,?,?,?,?,?)";
 	                    PreparedStatement pst = con.prepareStatement(sql);
 	                    pst.setInt(1, idx);
 	                    pst.setString(2, title.get(i).text());
 	                    pst.setString(3, e.attr("src"));
 	                    pst.setString(4, artist.get(i).text());
 	                    pst.setString(5, album.get(i).text());
-	                    pst.setInt(6, genre(con, arr[page]));
+	                    pst.setInt(6, type(con,"kr"));
+	                    pst.setInt(7, genre(con, arr[page]));
 	                    pst.execute();
 	                    pst.close();
 	                    i++;
@@ -213,4 +161,19 @@ public class MelonKoreaMusic {
 		}
 		return -1;
 	}
+	// Insert type_id
+		public static int type(Connection con, String type) throws SQLException{
+			String sql = "select id from music_type where type = ?";
+			ResultSet resultSet = null;
+			try (PreparedStatement select = con.prepareStatement(sql)){
+				select.setString(1, type);
+				resultSet = select.executeQuery();
+				if(resultSet.next()) {
+					return resultSet.getInt("id"); 
+				}
+			}finally {
+				if(resultSet!=null) resultSet.close();
+			}
+			return -1;
+		}
 }
