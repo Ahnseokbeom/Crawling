@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +19,6 @@ import org.jsoup.select.Elements;
 public class MelonPOPMusic {
 	static String num = "900";
 	static String[] arr = {"POP","록/메탈","일렉트로니카","랩/힙합","R&B/Soul","포크/블루스/컨트리"};
-	static String[] arr1 = {"POP","rock","electronica","rap","RnB","fork"};
 	static int page = 0;
 	public static void main(String[] args) {
         for(int i = 0;i<arr.length;i++) {
@@ -67,13 +68,14 @@ public class MelonPOPMusic {
                 i = 0;
                 idx = 1;
                 for (Element e : img) {
-                    sql = "insert into pop_"+arr1[page]+"(title,img,artist,album,genre) values(?,?,?,?,?)";
+                    sql = "insert into pop_music values(?,?,?,?,?,?)";
                     PreparedStatement pst = con.prepareStatement(sql);
-                    pst.setString(1, title.get(i).text());
-                    pst.setString(2, e.attr("src"));
-                    pst.setString(3, artist.get(i).text());
-                    pst.setString(4, album.get(i).text());
-                    pst.setString(5, "일렉트로니카");
+                    pst.setInt(1,idx);
+                    pst.setString(2, title.get(i).text());
+                    pst.setString(3, e.attr("src"));
+                    pst.setString(4, artist.get(i).text());
+                    pst.setString(5, album.get(i).text());
+                    pst.setInt(6, genre(con,arr[page]));
                     pst.execute();
                     pst.close();
                     i++;
@@ -86,5 +88,20 @@ public class MelonPOPMusic {
 	            e.printStackTrace();
 	        }
 	    }
+	}
+	// Insert genre_id 
+	public static int genre(Connection con, String genre) throws SQLException {
+		String sql = "select id from genre where genre = ?";
+		ResultSet resultSet = null;
+		try (PreparedStatement select = con.prepareStatement(sql)){
+			select.setString(1, genre);
+			resultSet = select.executeQuery();
+			if(resultSet.next()) {
+				return resultSet.getInt("id"); 
+			}
+		}finally {
+			if(resultSet!=null) resultSet.close();
+		}
+		return -1;
 	}
 }
