@@ -1,4 +1,4 @@
-# Jsoup Web Scraping Practice
+# Jsoup Web Scraping
 
 이 저장소는 Jsoup 라이브러리를 사용한 자바 웹 크롤링에 관한 예제와 연습 내용을 담고 있습니다.
 
